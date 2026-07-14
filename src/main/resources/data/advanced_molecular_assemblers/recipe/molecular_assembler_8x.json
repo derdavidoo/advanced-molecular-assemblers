@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "pattern": ["XAX", "BAC", "XAX"],
+  "key": {
+    "A": { "item": "advanced_molecular_assemblers:molecular_assembler_4x" },
+    "B": { "item": "ae2:annihilation_core" },
+    "C": { "item": "ae2:formation_core" },
+    "X": { "item": "minecraft:iron_ingot" }
+  },
+  "result": { "id": "advanced_molecular_assemblers:molecular_assembler_8x", "count": 1 }
+}

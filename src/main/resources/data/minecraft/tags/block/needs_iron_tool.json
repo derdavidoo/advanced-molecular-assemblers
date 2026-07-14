@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "advanced_molecular_assemblers:molecular_assembler_2x",
+    "advanced_molecular_assemblers:molecular_assembler_4x",
+    "advanced_molecular_assemblers:molecular_assembler_8x",
+    "advanced_molecular_assemblers:molecular_assembler_16x",
+    "advanced_molecular_assemblers:molecular_assembler_32x"
+  ]
+}

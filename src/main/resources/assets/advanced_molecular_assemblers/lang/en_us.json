@@ -1,0 +1,12 @@
+{
+  "block.advanced_molecular_assemblers.molecular_assembler_2x": "2x Molecular Assembler",
+  "block.advanced_molecular_assemblers.molecular_assembler_4x": "4x Molecular Assembler",
+  "block.advanced_molecular_assemblers.molecular_assembler_8x": "8x Molecular Assembler",
+  "block.advanced_molecular_assemblers.molecular_assembler_16x": "16x Molecular Assembler",
+  "block.advanced_molecular_assemblers.molecular_assembler_32x": "32x Molecular Assembler",
+  "gui.advanced_molecular_assemblers.title": "Advanced Molecular Assembler",
+  "gui.advanced_molecular_assemblers.lane": "Lane %s / %s",
+  "gui.advanced_molecular_assemblers.active": "Active: %s / %s",
+  "gui.advanced_molecular_assemblers.previous_lane": "Previous Lane",
+  "gui.advanced_molecular_assemblers.next_lane": "Next Lane"
+}

@@ -1,0 +1,9 @@
+{
+  "parent": "ae2:block/molecular_assembler",
+  "render_type": "cutout",
+  "textures": {
+    "particle": "advanced_molecular_assemblers:block/molecular_assembler_32x",
+    "outside": "advanced_molecular_assemblers:block/molecular_assembler_32x",
+    "base": "advanced_molecular_assemblers:block/molecular_assembler_32x"
+  }
+}

@@ -1,0 +1,16 @@
+Copyright (c) 2026 DerDavidoo
+
+Advanced Molecular Assemblers is licensed under the GNU Lesser General Public
+License, version 3.0 only (LGPL-3.0-only).
+
+SPDX-License-Identifier: LGPL-3.0-only
+
+The complete license documents are distributed with this project in:
+
+- LICENSES/GPL-3.0-only.txt
+- LICENSES/LGPL-3.0-only.txt
+
+This project interoperates with and adapts behavior from Applied Energistics 2
+and uses recolored adaptations of its Molecular Assembler texture. Applied
+Energistics 2 identifies the relevant code and assets as LGPL-licensed. See
+THIRD_PARTY_NOTICES.md.

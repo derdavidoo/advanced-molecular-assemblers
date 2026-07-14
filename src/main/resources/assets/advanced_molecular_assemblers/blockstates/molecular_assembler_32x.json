@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "powered=false": { "model": "advanced_molecular_assemblers:block/molecular_assembler_32x" },
+    "powered=true": { "model": "advanced_molecular_assemblers:block/molecular_assembler_32x" }
+  }
+}
