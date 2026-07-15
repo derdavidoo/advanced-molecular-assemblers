@@ -36,6 +36,10 @@ public final class ParallelMolecularAssemblerMenu extends UpgradeableMenu<Parall
     private int activeLanes;
     @GuiSync(9)
     private int laneCount;
+    @GuiSync(10)
+    private int enabledSlots;
+    @GuiSync(11)
+    private int invalidSlots;
 
     private SelectedLaneInventory selectedInventory;
     private Slot encodedPatternSlot;
@@ -65,21 +69,61 @@ public final class ParallelMolecularAssemblerMenu extends UpgradeableMenu<Parall
             selectedLane = Math.max(0, Math.min(selectedLane, laneCount - 1));
             craftProgress = getHost().getCraftingProgress(selectedLane);
             activeLanes = getHost().getActiveLaneCount();
+            updatePatternSlotState();
         }
         super.broadcastChanges();
+    }
+
+    private void updatePatternSlotState() {
+        enabledSlots = 0;
+        invalidSlots = 0;
+        var pattern = getHost().getCurrentPattern(selectedLane);
+        if (pattern == null) {
+            return;
+        }
+
+        for (int slotIndex = 0; slotIndex < 9; slotIndex++) {
+            int mask = 1 << slotIndex;
+            if (!pattern.isSlotEnabled(slotIndex)) {
+                continue;
+            }
+            enabledSlots |= mask;
+
+            ItemStack currentItem = selectedInventory.getStackInSlot(slotIndex);
+            if (!currentItem.isEmpty()
+                    && !pattern.isItemValid(slotIndex, AEItemKey.of(currentItem), getHost().getLevel())) {
+                invalidSlots |= mask;
+            }
+        }
     }
 
     @Override
     public boolean clickMenuButton(Player player, int id) {
         if (id == PREVIOUS_LANE_BUTTON) {
             selectedLane = Math.max(0, selectedLane - 1);
+            refreshSelectedLane();
             return true;
         }
         if (id == NEXT_LANE_BUTTON) {
             selectedLane = Math.min(getHost().getLaneCount() - 1, selectedLane + 1);
+            refreshSelectedLane();
             return true;
         }
         return super.clickMenuButton(player, id);
+    }
+
+    private void refreshSelectedLane() {
+        if (isServerSide()) {
+            craftProgress = getHost().getCraftingProgress(selectedLane);
+            activeLanes = getHost().getActiveLaneCount();
+            updatePatternSlotState();
+            sendAllDataToRemote();
+        }
+        for (Slot slot : slots) {
+            if (slot instanceof AppEngSlot appEngSlot) {
+                appEngSlot.resetCachedValidation();
+            }
+        }
     }
 
     public int getSelectedLane() {
@@ -97,6 +141,14 @@ public final class ParallelMolecularAssemblerMenu extends UpgradeableMenu<Parall
     public boolean isValidItemForSlot(int slotIndex, ItemStack stack) {
         var pattern = getHost().getCurrentPattern(selectedLane);
         return pattern != null && pattern.isItemValid(slotIndex, AEItemKey.of(stack), getHost().getLevel());
+    }
+
+    public boolean isInputSlotEnabled(int slotIndex) {
+        return (enabledSlots & (1 << slotIndex)) != 0;
+    }
+
+    public boolean isSlotValid(int slotIndex) {
+        return (invalidSlots & (1 << slotIndex)) == 0;
     }
 
     @Override
@@ -136,7 +188,7 @@ public final class ParallelMolecularAssemblerMenu extends UpgradeableMenu<Parall
         @Override
         protected boolean getCurrentValidationState() {
             ItemStack stack = getItem();
-            return stack.isEmpty() || mayPlace(stack);
+            return stack.isEmpty() || menu.isSlotValid(getSlotIndex());
         }
 
         @Override
@@ -150,8 +202,7 @@ public final class ParallelMolecularAssemblerMenu extends UpgradeableMenu<Parall
             if (!getInventory().getStackInSlot(slotIndex).isEmpty()) {
                 return true;
             }
-            var pattern = menu.getHost().getCurrentPattern(menu.getSelectedLane());
-            return slotIndex >= 0 && slotIndex < 9 && pattern != null && pattern.isSlotEnabled(slotIndex);
+            return slotIndex >= 0 && slotIndex < 9 && menu.isInputSlotEnabled(slotIndex);
         }
 
         @Override
