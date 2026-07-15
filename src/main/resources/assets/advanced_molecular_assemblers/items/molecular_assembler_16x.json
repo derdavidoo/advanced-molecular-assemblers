@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "advanced_molecular_assemblers:block/molecular_assembler_16x"
+  }
+}

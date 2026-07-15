@@ -5,7 +5,7 @@ import java.util.List;
 
 import appeng.api.upgrades.Upgrades;
 import appeng.client.gui.AEBaseScreen;
-import appeng.client.gui.Icon;
+import appeng.util.Icon;
 import appeng.client.gui.style.PaletteColor;
 import appeng.client.gui.style.ScreenStyle;
 import appeng.client.gui.widgets.IconButton;
@@ -14,7 +14,7 @@ import appeng.client.gui.widgets.ToolboxPanel;
 import appeng.core.localization.GuiText;
 import appeng.menu.SlotSemantics;
 import dev.advancedmolecularassemblers.menu.ParallelMolecularAssemblerMenu;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
@@ -72,12 +72,12 @@ public final class ParallelMolecularAssemblerScreen
     }
 
     @Override
-    public void drawFG(GuiGraphics graphics, int offsetX, int offsetY, int mouseX, int mouseY) {
+    public void drawFG(GuiGraphicsExtractor graphics, int offsetX, int offsetY, int mouseX, int mouseY) {
         int color = style.getColor(PaletteColor.DEFAULT_TEXT_COLOR).toARGB();
         Component laneText = Component.translatable("gui.advanced_molecular_assemblers.lane",
                 menu.getSelectedLane() + 1, menu.getLaneCount());
-        graphics.drawString(font, laneText, 56 - font.width(laneText) / 2, 18, color, false);
-        graphics.drawString(font,
+        graphics.text(font, laneText, 56 - font.width(laneText) / 2, 18, color, false);
+        graphics.text(font,
                 Component.translatable("gui.advanced_molecular_assemblers.active",
                         menu.getActiveLanes(), menu.getLaneCount()),
                 8, 91, color, false);

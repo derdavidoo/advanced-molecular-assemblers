@@ -7,14 +7,14 @@ import java.util.function.Supplier;
 import org.jetbrains.annotations.Nullable;
 
 import appeng.client.Point;
-import appeng.client.gui.Icon;
+import appeng.util.Icon;
 import appeng.client.gui.AEBaseScreen;
 import appeng.client.gui.ICompositeWidget;
 import appeng.client.gui.Rects;
 import appeng.client.gui.Tooltip;
 import appeng.client.gui.style.Blitter;
 import appeng.menu.slot.AppEngSlot;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
@@ -72,7 +72,7 @@ final class TwoColumnUpgradesPanel implements ICompositeWidget {
     }
 
     @Override
-    public void drawBackgroundLayer(GuiGraphics graphics, Rect2i bounds, Point mouse) {
+    public void drawBackgroundLayer(GuiGraphicsExtractor graphics, Rect2i bounds, Point mouse) {
         int count = getUpgradeSlotCount();
         if (count == 0) {
             return;
@@ -124,7 +124,7 @@ final class TwoColumnUpgradesPanel implements ICompositeWidget {
         for (int index = 0; index < count; index++) {
             int row = index / columns;
             int column = index % columns;
-            Icon.SLOT_BACKGROUND.getBlitter()
+            Blitter.icon(Icon.SLOT_BACKGROUND)
                     .dest(gridX + column * SLOT_SIZE, gridY + row * SLOT_SIZE)
                     .blit(graphics);
         }
@@ -151,7 +151,7 @@ final class TwoColumnUpgradesPanel implements ICompositeWidget {
         return tooltip.isEmpty() ? null : new Tooltip(tooltip);
     }
 
-    private static void drawSlot(GuiGraphics graphics, int x, int y,
+    private static void drawSlot(GuiGraphicsExtractor graphics, int x, int y,
             boolean borderLeft, boolean borderTop, boolean borderRight, boolean borderBottom) {
         int sourceX = PADDING;
         int sourceY = PADDING;

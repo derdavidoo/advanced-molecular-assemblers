@@ -1,6 +1,6 @@
 package dev.advancedmolecularassemblers.client;
 
-import appeng.init.client.InitScreens;
+import appeng.client.InitScreens;
 import dev.advancedmolecularassemblers.AdvancedMolecularAssemblers;
 import dev.advancedmolecularassemblers.menu.ParallelMolecularAssemblerMenu;
 import dev.advancedmolecularassemblers.content.ModBlockEntities;

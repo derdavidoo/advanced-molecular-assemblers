@@ -1,6 +1,9 @@
 {
-  "variants": {
-    "powered=false": { "model": "advanced_molecular_assemblers:block/molecular_assembler_16x" },
-    "powered=true": { "model": "advanced_molecular_assemblers:block/molecular_assembler_16x" }
-  }
+  "multipart": [
+    { "apply": { "model": "advanced_molecular_assemblers:block/molecular_assembler_16x" } },
+    {
+      "apply": { "model": "ae2:block/molecular_assembler_lights" },
+      "when": { "powered": "true" }
+    }
+  ]
 }

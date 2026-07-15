@@ -13,10 +13,10 @@ public final class ModBlockEntities {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ParallelMolecularAssemblerBlockEntity>>
             PARALLEL_MOLECULAR_ASSEMBLER = REGISTER.register("parallel_molecular_assembler", () ->
-                    BlockEntityType.Builder.of(
+                    new BlockEntityType<>(
                             ParallelMolecularAssemblerBlockEntity::new,
-                            ModBlocks.ASSEMBLERS.stream().map(entry -> entry.block().get()).toArray(net.minecraft.world.level.block.Block[]::new))
-                            .build(null));
+                            ModBlocks.ASSEMBLERS.stream().map(entry -> entry.block().get())
+                                    .toArray(net.minecraft.world.level.block.Block[]::new)));
 
     private ModBlockEntities() {
     }

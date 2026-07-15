@@ -51,6 +51,6 @@ public final class ParallelMolecularAssemblerBlock extends AEBaseEntityBlock<Par
         if (!level.isClientSide()) {
             MenuOpener.open(ParallelMolecularAssemblerMenu.TYPE, player, MenuLocators.forBlockEntity(host));
         }
-        return InteractionResult.sidedSuccess(level.isClientSide());
+        return InteractionResult.SUCCESS;
     }
 }

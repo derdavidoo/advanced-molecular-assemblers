@@ -22,16 +22,16 @@ Each lane is independent. A blocked output stops only that lane, and a lane with
 
 | Dependency | Version |
 | --- | --- |
-| Minecraft | 1.21.1 |
-| NeoForge | 21.1.169 or newer |
-| Applied Energistics 2 | 19.2.17 up to, but not including, 20.0.0 |
-| Java | 21 |
+| Minecraft | 26.1.2 |
+| NeoForge | 26.1.2.78 or newer 26.1 build |
+| Applied Energistics 2 | 26.1.9-alpha up to, but not including, 27.0.0 |
+| Java | 25 |
 
 Both client and server need the mod installed.
 
 ## Installation
 
-1. Install NeoForge for Minecraft 1.21.1.
+1. Install NeoForge for Minecraft 26.1.2.
 2. Install Applied Energistics 2.
 3. Place the Advanced Molecular Assemblers JAR in the `mods` directory.
 

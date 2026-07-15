@@ -28,7 +28,7 @@ import appeng.api.upgrades.UpgradeInventories;
 import appeng.api.util.AECableType;
 import appeng.blockentity.crafting.IMolecularAssemblerSupportedPattern;
 import appeng.blockentity.grid.AENetworkedInvBlockEntity;
-import appeng.client.render.crafting.AssemblerAnimationStatus;
+import appeng.blockentity.crafting.MolecularAssemblerAnimationStatus;
 import appeng.core.definitions.AEItems;
 import appeng.core.localization.GuiText;
 import appeng.core.localization.Tooltips;
@@ -39,15 +39,13 @@ import dev.advancedmolecularassemblers.content.ModBlockEntities;
 import dev.advancedmolecularassemblers.network.AssemblerAnimationPayload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.server.level.ServerLevel;
 import net.neoforged.api.distmarker.Dist;
@@ -59,7 +57,7 @@ public final class ParallelMolecularAssemblerBlockEntity extends AENetworkedInvB
         implements IUpgradeableObject, IGridTickable, ICraftingMachine, IPowerChannelState {
     public static final Logger LOGGER = LogUtils.getLogger();
     public static final int UPGRADE_SLOTS = 10;
-    public static final ResourceLocation INV_MAIN = AdvancedMolecularAssemblers.id("parallel_molecular_assembler");
+    public static final Identifier INV_MAIN = AdvancedMolecularAssemblers.id("parallel_molecular_assembler");
 
     private final CraftingLane[] lanes;
     private final InternalInventory internalInventory;
@@ -72,7 +70,7 @@ public final class ParallelMolecularAssemblerBlockEntity extends AENetworkedInvB
     private boolean powered;
 
     @OnlyIn(Dist.CLIENT)
-    private AssemblerAnimationStatus animationStatus;
+    private MolecularAssemblerAnimationStatus animationStatus;
 
     public ParallelMolecularAssemblerBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.PARALLEL_MOLECULAR_ASSEMBLER.get(), pos, state);
@@ -136,7 +134,7 @@ public final class ParallelMolecularAssemblerBlockEntity extends AENetworkedInvB
         int cards = upgrades.getInstalledUpgrades(AEItems.SPEED_CARD);
         List<Component> tooltip = cards == 0 ? List.of()
                 : List.of(GuiText.CompatibleUpgrade.text(
-                        Tooltips.of(AEItems.SPEED_CARD.asItem().getDescription()),
+                        Tooltips.of(AEItems.SPEED_CARD.asItem().getDefaultInstance().getItemName()),
                         Tooltips.ofUnformattedNumber(cards)));
         return new PatternContainerGroup(icon, name, tooltip);
     }
@@ -226,17 +224,17 @@ public final class ParallelMolecularAssemblerBlockEntity extends AENetworkedInvB
 
     @OnlyIn(Dist.CLIENT)
     public void setAnimationFromNetwork(ItemStack output, int rate) {
-        animationStatus = new AssemblerAnimationStatus((byte) rate, output);
+        animationStatus = new MolecularAssemblerAnimationStatus((byte) rate, output);
     }
 
     @OnlyIn(Dist.CLIENT)
-    public void setAnimationStatus(@Nullable AssemblerAnimationStatus animationStatus) {
+    public void setAnimationStatus(@Nullable MolecularAssemblerAnimationStatus animationStatus) {
         this.animationStatus = animationStatus;
     }
 
     @OnlyIn(Dist.CLIENT)
     @Nullable
-    public AssemblerAnimationStatus getAnimationStatus() {
+    public MolecularAssemblerAnimationStatus getAnimationStatus() {
         return animationStatus;
     }
 
@@ -246,7 +244,7 @@ public final class ParallelMolecularAssemblerBlockEntity extends AENetworkedInvB
     }
 
     @Override
-    public InternalInventory getSubInventory(ResourceLocation id) {
+    public InternalInventory getSubInventory(Identifier id) {
         if (ISegmentedInventory.UPGRADES.equals(id)) {
             return upgrades;
         }
@@ -296,24 +294,27 @@ public final class ParallelMolecularAssemblerBlockEntity extends AENetworkedInvB
     }
 
     @Override
-    public void saveAdditional(CompoundTag data, HolderLookup.Provider registries) {
-        super.saveAdditional(data, registries);
-        var laneData = new ListTag();
+    public void saveAdditional(ValueOutput data) {
+        super.saveAdditional(data);
+        var laneData = data.childrenList("crafting_lanes");
         for (var lane : lanes) {
-            laneData.add(lane.writeMetadata(registries));
+            lane.writeMetadata(laneData.addChild());
         }
-        data.put("crafting_lanes", laneData);
         data.putInt("data_version", 3);
-        upgrades.writeToNBT(data, "upgrades", registries);
+        upgrades.writeToNBT(data, "upgrades");
     }
 
     @Override
-    public void loadTag(CompoundTag data, HolderLookup.Provider registries) {
-        super.loadTag(data, registries);
-        upgrades.readFromNBT(data, "upgrades", registries);
-        ListTag laneData = data.getList("crafting_lanes", Tag.TAG_COMPOUND);
-        for (int i = 0; i < Math.min(lanes.length, laneData.size()); i++) {
-            lanes[i].readMetadata(laneData.getCompound(i), registries);
+    public void loadTag(ValueInput data) {
+        super.loadTag(data);
+        upgrades.readFromNBT(data, "upgrades");
+        var laneData = data.childrenListOrEmpty("crafting_lanes");
+        int laneIndex = 0;
+        for (var savedLane : laneData) {
+            if (laneIndex >= lanes.length) {
+                break;
+            }
+            lanes[laneIndex++].readMetadata(savedLane);
         }
     }
 

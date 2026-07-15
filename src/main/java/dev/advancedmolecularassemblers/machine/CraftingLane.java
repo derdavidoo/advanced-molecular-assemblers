@@ -13,13 +13,12 @@ import appeng.menu.AutoCraftingMenu;
 import appeng.util.inv.AppEngInternalInventory;
 import appeng.util.inv.CombinedInternalInventory;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.TransientCraftingContainer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 final class CraftingLane {
     static final int INPUT_SLOTS = 9;
@@ -90,7 +89,7 @@ final class CraftingLane {
     }
 
     IMolecularAssemblerSupportedPattern currentPattern() {
-        if (host.getLevel() != null && host.getLevel().isClientSide) {
+        if (host.getLevel() != null && host.getLevel().isClientSide()) {
             var decoded = PatternDetailsHelper.decodePattern(patternInventory.getStackInSlot(0), host.getLevel());
             return decoded instanceof IMolecularAssemblerSupportedPattern supportedPattern ? supportedPattern : null;
         }
@@ -336,57 +335,50 @@ final class CraftingLane {
         restorePlan();
     }
 
-    CompoundTag writeMetadata(HolderLookup.Provider registries) {
-        var data = new CompoundTag();
+    void writeMetadata(ValueOutput data) {
         if (pushDirection != null) {
             data.putInt("direction", pushDirection.get3DDataValue());
         }
         if (forcedPlan) {
             ItemStack pattern = plan != null ? plan.getDefinition().toStack() : serializedPattern;
             if (!pattern.isEmpty()) {
-                data.put("pattern", pattern.save(registries));
+                data.store("pattern", ItemStack.OPTIONAL_CODEC, pattern);
             }
         }
-        var queuedJobs = new ListTag();
+        var queuedJobs = data.childrenList("queued_jobs");
         for (int i = 0; i < queuedCrafts; i++) {
-            var queuedJob = new CompoundTag();
+            var queuedJob = queuedJobs.addChild();
             if (!queuedPatterns[i].isEmpty()) {
-                queuedJob.put("pattern", queuedPatterns[i].save(registries));
+                queuedJob.store("pattern", ItemStack.OPTIONAL_CODEC, queuedPatterns[i]);
             }
             if (queuedDirections[i] != null) {
                 queuedJob.putInt("direction", queuedDirections[i].get3DDataValue());
             }
-            queuedJobs.add(queuedJob);
         }
-        data.put("queued_jobs", queuedJobs);
-        return data;
     }
 
-    void readMetadata(CompoundTag data, HolderLookup.Provider registries) {
+    void readMetadata(ValueInput data) {
         resetLaneState();
-        if (data.contains("direction")) {
-            int direction = data.getInt("direction");
-            if (direction >= 0 && direction < Direction.values().length) {
-                pushDirection = Direction.from3DDataValue(direction);
-            }
+        int direction = data.getIntOr("direction", -1);
+        if (direction >= 0 && direction < Direction.values().length) {
+            pushDirection = Direction.from3DDataValue(direction);
         }
-        if (data.contains("pattern")) {
-            ItemStack pattern = ItemStack.parseOptional(registries, data.getCompound("pattern"));
-            if (!pattern.isEmpty() && pushDirection != null) {
-                forcedPlan = true;
-                serializedPattern = pattern;
-            }
+        ItemStack pattern = data.read("pattern", ItemStack.OPTIONAL_CODEC).orElse(ItemStack.EMPTY);
+        if (!pattern.isEmpty() && pushDirection != null) {
+            forcedPlan = true;
+            serializedPattern = pattern;
         }
-        ListTag queuedJobs = data.getList("queued_jobs", net.minecraft.nbt.Tag.TAG_COMPOUND);
-        queuedCrafts = Math.min(QUEUE_CAPACITY, queuedJobs.size());
-        for (int i = 0; i < queuedCrafts; i++) {
-            CompoundTag queuedJob = queuedJobs.getCompound(i);
-            queuedPatterns[i] = ItemStack.parseOptional(registries, queuedJob.getCompound("pattern"));
-            if (queuedJob.contains("direction")) {
-                int direction = queuedJob.getInt("direction");
-                if (direction >= 0 && direction < Direction.values().length) {
-                    queuedDirections[i] = Direction.from3DDataValue(direction);
-                }
+        var queuedJobs = data.childrenListOrEmpty("queued_jobs");
+        queuedCrafts = 0;
+        for (var queuedJob : queuedJobs) {
+            if (queuedCrafts >= QUEUE_CAPACITY) {
+                break;
+            }
+            int i = queuedCrafts++;
+            queuedPatterns[i] = queuedJob.read("pattern", ItemStack.OPTIONAL_CODEC).orElse(ItemStack.EMPTY);
+            int queuedDirection = queuedJob.getIntOr("direction", -1);
+            if (queuedDirection >= 0 && queuedDirection < Direction.values().length) {
+                queuedDirections[i] = Direction.from3DDataValue(queuedDirection);
             }
         }
         restorePlan();

@@ -12,7 +12,7 @@ import dev.advancedmolecularassemblers.content.ModItems;
 import dev.advancedmolecularassemblers.content.ModMenus;
 import dev.advancedmolecularassemblers.machine.ParallelMolecularAssemblerBlockEntity;
 import dev.advancedmolecularassemblers.network.AssemblerAnimationPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
@@ -46,8 +46,8 @@ public final class AdvancedMolecularAssemblers {
                 AssemblerAnimationPayload::handle);
     }
 
-    public static ResourceLocation id(String path) {
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+    public static Identifier id(String path) {
+        return Identifier.fromNamespaceAndPath(MOD_ID, path);
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
@@ -65,7 +65,7 @@ public final class AdvancedMolecularAssemblers {
         var type = ModBlockEntities.PARALLEL_MOLECULAR_ASSEMBLER.get();
         event.registerBlockEntity(AECapabilities.CRAFTING_MACHINE, type, (host, side) -> host);
         event.registerBlockEntity(AECapabilities.IN_WORLD_GRID_NODE_HOST, type, (host, side) -> host);
-        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, type,
+        event.registerBlockEntity(Capabilities.Item.BLOCK, type,
                 (host, side) -> host.getExposedItemHandler(side));
     }
 
