@@ -1,20 +1,29 @@
 package dev.advancedmolecularassemblers.menu;
 
 import appeng.api.inventories.BaseInternalInventory;
+import appeng.api.inventories.InternalInventory;
 import appeng.api.stacks.AEItemKey;
+import appeng.util.inv.AppEngInternalInventory;
 import dev.advancedmolecularassemblers.machine.ParallelMolecularAssemblerBlockEntity;
 import net.minecraft.world.item.ItemStack;
 
 final class SelectedLaneInventory extends BaseInternalInventory {
     private final ParallelMolecularAssemblerBlockEntity host;
     private final ParallelMolecularAssemblerMenu menu;
+    private final InternalInventory clientView = new AppEngInternalInventory(11);
 
     SelectedLaneInventory(ParallelMolecularAssemblerBlockEntity host, ParallelMolecularAssemblerMenu menu) {
         this.host = host;
         this.menu = menu;
     }
 
-    private appeng.api.inventories.InternalInventory delegate() {
+    private InternalInventory delegate() {
+        // Menu slot packets describe only the currently selected lane. Keeping a
+        // single client-side view prevents a packet from being written into the
+        // wrong cached lane when the selected-lane GUI field arrives afterward.
+        if (menu.isClientSide()) {
+            return clientView;
+        }
         int lane = Math.max(0, Math.min(menu.getSelectedLane(), host.getLaneCount() - 1));
         return host.getLaneInventory(lane);
     }
