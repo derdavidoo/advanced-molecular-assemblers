@@ -3,10 +3,10 @@
   "category": "redstone",
   "pattern": ["XAX", "BAC", "XAX"],
   "key": {
-    "A": { "item": "ae2:molecular_assembler" },
-    "B": { "item": "ae2:annihilation_core" },
-    "C": { "item": "ae2:formation_core" },
-    "X": { "item": "minecraft:iron_ingot" }
+    "A": "ae2:molecular_assembler",
+    "B": "ae2:annihilation_core",
+    "C": "ae2:formation_core",
+    "X": "minecraft:iron_ingot"
   },
   "result": { "id": "advanced_molecular_assemblers:molecular_assembler_2x", "count": 1 }
 }

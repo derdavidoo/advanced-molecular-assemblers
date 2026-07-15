@@ -35,19 +35,23 @@ neoForge {
     runs {
         client {
             client()
+            gameDirectory = file("run-${minecraft_version}/client")
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
         server {
             server()
+            gameDirectory = file("run-${minecraft_version}/server")
             programArgument '--nogui'
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
         gameTestServer {
             type = 'gameTestServer'
+            gameDirectory = file("run-${minecraft_version}/game-test-server")
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
         data {
             clientData()
+            gameDirectory = file("run-${minecraft_version}/data")
             programArguments.addAll '--mod', project.mod_id, '--all', '--output',
                     file('src/generated/resources/').absolutePath, '--existing',
                     file('src/main/resources/').absolutePath

@@ -8,7 +8,6 @@ import appeng.block.AEBaseBlock;
 import dev.advancedmolecularassemblers.AdvancedMolecularAssemblers;
 import dev.advancedmolecularassemblers.machine.ParallelMolecularAssemblerBlock;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -29,9 +28,9 @@ public final class ModBlocks {
     }
 
     private static AssemblerEntry register(AssemblerTier tier) {
-        DeferredBlock<ParallelMolecularAssemblerBlock> block = REGISTER.register(tier.id(),
-                () -> new ParallelMolecularAssemblerBlock(tier,
-                        AEBaseBlock.metalProps(BlockBehaviour.Properties.of()).noOcclusion()));
+        DeferredBlock<ParallelMolecularAssemblerBlock> block = REGISTER.registerBlock(tier.id(),
+                properties -> new ParallelMolecularAssemblerBlock(tier,
+                        AEBaseBlock.metalProps(properties).noOcclusion()));
         DeferredItem<BlockItem> item = ModItems.REGISTER.registerSimpleBlockItem(tier.id(), block);
         var entry = new AssemblerEntry(tier, block, item);
         MUTABLE_ASSEMBLERS.add(entry);

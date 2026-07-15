@@ -48,8 +48,6 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.server.level.ServerLevel;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 
@@ -69,7 +67,6 @@ public final class ParallelMolecularAssemblerBlockEntity extends AENetworkedInvB
     private int tickCursor;
     private boolean powered;
 
-    @OnlyIn(Dist.CLIENT)
     private MolecularAssemblerAnimationStatus animationStatus;
 
     public ParallelMolecularAssemblerBlockEntity(BlockPos pos, BlockState state) {
@@ -222,17 +219,14 @@ public final class ParallelMolecularAssemblerBlockEntity extends AENetworkedInvB
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
     public void setAnimationFromNetwork(ItemStack output, int rate) {
         animationStatus = new MolecularAssemblerAnimationStatus((byte) rate, output);
     }
 
-    @OnlyIn(Dist.CLIENT)
     public void setAnimationStatus(@Nullable MolecularAssemblerAnimationStatus animationStatus) {
         this.animationStatus = animationStatus;
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Nullable
     public MolecularAssemblerAnimationStatus getAnimationStatus() {
         return animationStatus;
