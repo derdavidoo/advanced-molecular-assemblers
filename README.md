@@ -1,6 +1,6 @@
-# Advanced Molecular Assemblers
-
 ![Advanced Molecular Assemblers logo](src/main/resources/assets/advanced_molecular_assemblers/logo.png)
+
+# Advanced Molecular Assemblers
 
 Advanced Molecular Assemblers is an [Applied Energistics 2](https://github.com/AppliedEnergistics/Applied-Energistics-2) addon for Minecraft that adds tiered Molecular Assemblers capable of handling multiple crafting jobs in parallel.
 
@@ -11,23 +11,10 @@ Advanced Molecular Assemblers is an [Applied Energistics 2](https://github.com/A
 - An AE2-style interface for switching between and inspecting lanes.
 - Manual encoded-pattern and ingredient insertion for every lane.
 - Ten Acceleration Card slots in a 2x5 upgrade panel.
-- A speed curve reaching two crafts per active lane per tick with ten cards.
 - A two-job input queue per lane to reduce Pattern Provider bottlenecks.
 - Persistent lane contents, queued jobs, patterns, progress, and upgrades.
-- Tier-colored Molecular Assembler textures and normal AE2 crafting animations.
 
 Each lane is independent. A blocked output stops only that lane, and a lane with a manually inserted pattern remains reserved until the pattern is removed.
-
-## Requirements
-
-| Dependency | Version |
-| --- | --- |
-| Minecraft | 26.1.2 |
-| NeoForge | 26.1.2.78 or newer 26.1 build |
-| Applied Energistics 2 | 26.1.9-alpha up to, but not including, 27.0.0 |
-| Java | 25 |
-
-Both client and server need the mod installed.
 
 ## Installation
 
